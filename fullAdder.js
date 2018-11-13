@@ -89,6 +89,9 @@ function add(num1, num2) {
  * @param {String} num2 The subtrahend
  */
 function subtract(num1, num2) {
+  if (num1 > 255 || num2 > 255) {
+    throw new Error('Sorry, can only handle 8-bit numbers')
+  }
   const bin1 = convert2Binary(num1, 8) //minuend
   const bin2 = convert2Binary(num2, 8) //subtrahend
   const bin2flip = convert2Binary(~num2, 8) // 1's complement of subtrahend
@@ -98,5 +101,5 @@ function subtract(num1, num2) {
   return convert2Decimal(result3)
 }
 
-const result = subtract(253, 176)
+const result = subtract(200, 100)
 console.log(result)

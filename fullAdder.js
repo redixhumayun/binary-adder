@@ -8,16 +8,43 @@ function halfAdder(a, b) {
   return [a ^ b, a & b]
 }
 
-function convert2Binary(num) {
-  return ('00000000' + (num >>> 0).toString(2)).substr(-8);
+function fullSubtractor(a, b) {
+  return a ^ b
 }
 
-function add(num1, num2) {
-  const bin1 = convert2Binary(num1);
-  const bin2 = convert2Binary(num2);
-  binSplit = bin2.split('')
+/**
+ * 
+ * @param {String} bin
+ * @returns {Number} 
+ */
+function convert2Decimal(bin) {
+  return parseInt(bin, 2)
+}
+
+/**
+ * 
+ * @param {Number} num
+ * @param {Number} padding
+ * @return {String} 
+ */
+function convert2Binary(num, padding) {
+  return ('00000000' + (num >>> 0).toString(2)).substr(-padding);
+}
+
+function subReduction(num1, num2) {
+  let binSplit = num2.split('')
+  let result = num1.split('').reduceRight(function performReduction(acc, curr, index) {
+    let result = fullSubtractor(curr, binSplit[index])
+    acc.push(result)
+    return acc
+  }, [])
+  return result.reverse().join('')
+}
+
+function addReduction(num1, num2) {
+  let binSplit = num2.split('')
   let carryIn = 0
-  let result = bin1.split('').reduceRight(function performReduction(acc, curr, index) {
+  let result = num1.split('').reduceRight(function performReduction(acc, curr, index) {
     const result = fullAdder(curr, binSplit[index], carryIn)
     carryIn = result.carryOut
     acc.push(result.sum)
@@ -27,19 +54,49 @@ function add(num1, num2) {
   return result.reverse().join('')
 }
 
-//  assume a is minuend and b is subtrahend
+/**
+ * 
+ * @param {String} num1 
+ * @param {String} num2 
+ * @param {Number} operationBit 0 to perform addition, 1 to perform subtraction
+ * @returns {String}
+ */
+function binaryAdder(num1, num2, operationBit = 0) {
+  if (num1.length !== num2.length) {
+    let l = num1.length > num2.length ? num1.length : num2.length
+    num1 = convert2Binary(convert2Decimal(num1), l)
+    num2 = convert2Binary(convert2Decimal(num2), l)
+  }
+  return operationBit ? subReduction(num1, num2) : addReduction(num1, num2)
+}
+
+/**
+ * 
+ * @param {String} num1 
+ * @param {String} num2
+ * @returns {String}
+ */
+function add(num1, num2) {
+  const bin1 = convert2Binary(num1, 8)
+  const bin2 = convert2Binary(num2, 8)
+  const result = binaryAdder(bin1, bin2)
+  return convert2Decimal(result)
+}
+
+/**
+ * 
+ * @param {String} num1 The minuend
+ * @param {String} num2 The subtrahend
+ */
 function subtract(num1, num2) {
-  const bin1 = convert2Binary(num1) //minuend
-  const bin2 = convert2Binary(num2) //subtrahend
-  const bin2flip = convert2Binary(~num2) // 1's complement of subtrahend
-  console.log(bin2flip)
-  const result1 = add(bin1, bin2flip)
-  binSplit = bin2.split('')
+  const bin1 = convert2Binary(num1, 8) //minuend
+  const bin2 = convert2Binary(num2, 8) //subtrahend
+  const bin2flip = convert2Binary(~num2, 8) // 1's complement of subtrahend
+  const result1 = binaryAdder(bin1, bin2flip)
+  const result2 = binaryAdder(result1, convert2Binary(1, 8))
+  const result3 = binaryAdder(result2, convert2Binary(256, 9), 1)
+  return convert2Decimal(result3)
 }
 
-function flipBits (num) {
-  return convert2Binary(~num)
-}
-
-const result = add(253, 79)
+const result = subtract(253, 176)
 console.log(result)

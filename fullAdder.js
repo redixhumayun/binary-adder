@@ -93,7 +93,6 @@ function subtract(num1, num2) {
     throw new Error('Sorry, can only handle 8-bit numbers')
   }
   const bin1 = convert2Binary(num1, 8) //minuend
-  const bin2 = convert2Binary(num2, 8) //subtrahend
   const bin2flip = convert2Binary(~num2, 8) // 1's complement of subtrahend
   const result1 = binaryAdder(bin1, bin2flip)
   const result2 = binaryAdder(result1, convert2Binary(1, 8))

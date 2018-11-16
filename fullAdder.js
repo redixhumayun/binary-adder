@@ -1,13 +1,29 @@
+/**
+ * 
+ * @param {String} a 
+ * @param {String} b 
+ * @param {String} carryIn 
+ */
 function fullAdder(a, b, carryIn) {
   const [halfSum1, halfCarry1] = halfAdder(a, b);
   const [halfSum2, halfCarry2] = halfAdder(carryIn, halfSum1)
   return { sum: halfSum2, carryOut: halfCarry1 | halfCarry2 }
 }
 
+/**
+ * 
+ * @param {String} a 
+ * @param {String} b 
+ */
 function halfAdder(a, b) {
   return [a ^ b, a & b]
 }
 
+/**
+ * 
+ * @param {String} a 
+ * @param {String} b 
+ */
 function fullSubtractor(a, b) {
   return a ^ b
 }
@@ -31,6 +47,11 @@ function convert2Binary(num, padding) {
   return ('00000000' + (num >>> 0).toString(2)).substr(-padding);
 }
 
+/**
+ * 
+ * @param {String} num1 
+ * @param {String} num2 
+ */
 function subReduction(num1, num2) {
   let binSplit = num2.split('')
   let result = num1.split('').reduceRight(function performReduction(acc, curr, index) {
@@ -41,6 +62,11 @@ function subReduction(num1, num2) {
   return result.reverse().join('')
 }
 
+/**
+ * 
+ * @param {String} num1 
+ * @param {String} num2 
+ */
 function addReduction(num1, num2) {
   let binSplit = num2.split('')
   let carryIn = 0
